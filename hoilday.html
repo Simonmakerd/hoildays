@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>假期进度计算器</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f8fc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 2em;
+      border-radius: 16px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #333;
+      text-align: center;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>🎓 假期进度计算器</h2>
+  <label>放假日期：</label>
+  <input type="date" id="start" value="2025-07-20"/>
+  <label>开学日期：</label>
+  <input type="date" id="end" value="2025-09-01"/>
+  <label>当前日期：</label>
+  <input type="date" id="current" />
+  <button onclick="calculate()">计算进度</button>
+  <div class="result" id="result">📊 等待输入...</div>
+</div>
+
+<script>
+  // 默认当前日期设为今天
+  document.getElementById("current").valueAsDate = new Date();
+
+  function parseDate(str) {
+    return new Date(str + 'T00:00:00');
+  }
+
+  function calculate() {
+    const start = parseDate(document.getElementById("start").value);
+    const end = parseDate(document.getElementById("end").value);
+    let current = parseDate(document.getElementById("current").value);
+    const result = document.getElementById("result");
+
+    if (end < start) {
+      end.setFullYear(end.getFullYear() + 1);
+      if (current < start) {
+        current.setFullYear(current.getFullYear() + 1);
+      }
+    }
+
+    if (current < start) {
+      result.textContent = "📅 假期还未开始";
+    } else if (current > end) {
+      result.textContent = "📅 假期已结束";
+    } else {
+      const total = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+      const passed = Math.floor((current - start) / (1000 * 60 * 60 * 24));
+      const remaining = total - passed;
+      const percent = (passed / total) * 100;
+      result.textContent = `📈 假期进度：${percent.toFixed(2)}%\n📆 已过 ${passed} 天 / 共 ${total} 天 / 剩余 ${remaining} 天`;
+    }
+  }
+</script>
+</body>
+</html>
